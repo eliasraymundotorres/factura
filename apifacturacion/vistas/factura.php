@@ -307,7 +307,8 @@ function ruc()
             productos = json.result;
             listado = '';
             for(i=0;i<productos.length;i++){
-            	listado = listado + '<tr><td>'+productos[i].codigo_02+'</td><td><textarea class="form-control" id="nom'+productos[i].id+'">'+productos[i].descripcion+'</textarea> </td><td><input class="form-control" type="number" style="width:80px" value="1"  id="cant'+productos[i].id+'"> </td><td><input class="form-control" style="width:80px" id="precio'+productos[i].id+'" value="'+productos[i].precio_venta01+'" /></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\''+productos[i].id+'\')"><i class="fa fa-plus"></i></button></td></tr>';
+              var precio = number_format(productos[i].precio_venta01,2,'.',',');
+            	listado = listado + '<tr><td>'+productos[i].codigo_02+'</td><td><textarea class="form-control" id="nom'+productos[i].id+'">'+productos[i].descripcion+'</textarea> </td><td><input class="form-control" type="number" style="width:80px" value="1"  id="cant'+productos[i].id+'"> </td><td><input class="form-control" style="width:80px" id="precio'+productos[i].id+'" value="'+precio+'" /></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\''+productos[i].id+'\')"><i class="fa fa-plus"></i></button></td></tr>';
             }
             $("#div_productos").html(listado);
             

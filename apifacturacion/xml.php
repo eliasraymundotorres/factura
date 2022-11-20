@@ -92,7 +92,7 @@ class GeneradorXML{
       <cbc:AllowanceChargeReasonCode>00</cbc:AllowanceChargeReasonCode>
       <cbc:MultiplierFactorNumeric>'.$comprobante['descPorcentaje'].'</cbc:MultiplierFactorNumeric>
       <cbc:Amount currencyID="'.$comprobante['moneda'].'">'.$comprobante['descValor'].'</cbc:Amount>
-      <cbc:BaseAmount currencyID="'.$comprobante['moneda'].'">'.$comprobante['total_opexoneradas'].'</cbc:BaseAmount>
+      <cbc:BaseAmount currencyID="'.$comprobante['moneda'].'">'.$comprobante['totalSinDescuento'].'</cbc:BaseAmount>
    </cac:AllowanceCharge>
    <cac:PaymentTerms>
      <cbc:ID>FormaPago</cbc:ID>

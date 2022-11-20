@@ -334,6 +334,7 @@ $pdf->SetMargins(0, 0 , 0);
     $igv=number_format($venta['igv'],2,'.',',');
     $exoneradas=number_format($venta['op_exoneradas'],2,'.',',');
     $inafectas=number_format($venta['op_inafectas'],2,'.',',');
+    $descuento=number_format($venta['descuento'],2,'.',',');
     $total = number_format($venta['total'],2,'.',',');
     //$pdf->Output();
     $pdf->setFont('Courier','',6);
@@ -351,6 +352,9 @@ $pdf->SetMargins(0, 0 , 0);
     $pdf->Row(array($pdf->cell($ancho*0.75,3,utf8_decode('Op Inafectas S/'),0,0,'R'),$pdf->cell($ancho*0.25,3,$inafectas,0,0,'L'))); 
 
     $pdf->SetWidths(array(47,13));
+    $pdf->Row(array($pdf->cell($ancho*0.75,3,utf8_decode('Descuento S/'),0,0,'R'),$pdf->cell($ancho*0.25,3,$descuento,0,0,'L'))); 
+
+    $pdf->SetWidths(array(47,13));
     $pdf->Row(array($pdf->cell($ancho*0.75,3,utf8_decode('TOTAL S/'),0,0,'R'),$pdf->cell($ancho*0.25,3,$total,0,0,'L')));
 
  
@@ -362,7 +366,7 @@ $pdf->SetMargins(0, 0 , 0);
    
     $pdf->cell($ancho,3,utf8_decode('Representación Impresa FACTURA ELECTRÓNICA'),0,1,'C');
 
-    $resumen = 'compruebe en https://intrasoftperu.com/factura/1';
+    $resumen = 'compruebe en https://intrasoftperu.com/hrhv/1';
     $pdf->SetFont('Arial','',6);
     $pdf->Cell($ancho,3,$resumen,0,1,'C');
 

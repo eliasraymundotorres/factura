@@ -562,7 +562,8 @@ function controlador($accion){
 
 			$porcentajeDescuento = $_POST['porcentaje']/100;
 			$valorDescuento = $op_exoneradas*$porcentajeDescuento;
-			$total = ($op_gravadas + $op_exoneradas + $op_inafectas + $igv) - $valorDescuento;
+			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
+			$totalConDescuento = $total - $valorDescuento;
 
 			$idserie = $_POST['idserie'];
 
@@ -580,9 +581,10 @@ function controlador($accion){
 					'igv'			=> $igv,
 					'total_opexoneradas'	=> $op_exoneradas,
 					'total_opinafectas'	=> $op_inafectas,
-					'total'			=> $total,
+					'totalSinDescuento'	=> $total,
 					'descPorcentaje'=> $porcentajeDescuento,
-					'desValor'		=> $valorDescuento,
+					'descValor'		=> $valorDescuento,
+					'total'			=> $totalConDescuento,
 					'total_texto'	=> CantidadEnLetra($total),
 					'codcliente'	=> $idcliente
 				);			

@@ -29,8 +29,8 @@ class clsVenta{
 	}
 
 	function insertarVenta($idemisor, $venta){
-		$sql = "INSERT INTO venta(id, idemisor, tipocomp, idserie, serie, correlativo, fecha_emision, codmoneda, op_gravadas, op_exoneradas, op_inafectas, igv, total, codcliente)
-				VALUES (NULL, :idemisor, :tipocomp, :idserie, :serie, :correlativo, :fecha_emision, :codmoneda, :op_gravadas, :op_exoneradas, :op_inafectas, :igv, :total, :codcliente)";
+		$sql = "INSERT INTO venta(id, idemisor, tipocomp, idserie, serie, correlativo, fecha_emision, codmoneda, op_gravadas, op_exoneradas, op_inafectas, igv, descuento, total, codcliente)
+				VALUES (NULL, :idemisor, :tipocomp, :idserie, :serie, :correlativo, :fecha_emision, :codmoneda, :op_gravadas, :op_exoneradas, :op_inafectas, :igv, :descuento, :total, :codcliente)";
 		$parametros = array(
 					':idemisor'=>$idemisor,
 					':tipocomp'=>$venta['tipodoc'],
@@ -43,6 +43,7 @@ class clsVenta{
 					':op_exoneradas'=>$venta['total_opexoneradas'],
 					':op_inafectas' =>$venta['total_opinafectas'],
 					':igv'			=>$venta['igv'],
+					':descuento'	=>$venta['descValor'],
 					':total'		=>$venta['total'],
 					':codcliente'	=>$venta['codcliente']					
 				);
