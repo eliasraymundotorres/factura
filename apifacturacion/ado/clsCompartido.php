@@ -151,6 +151,14 @@ class clsCompartido{
 		$pre->execute($parametros);
 		return $pre;
 	}
+	function listarSerie1($tipocomp,$tipo){
+		$sql = "SELECT * FROM serie WHERE tipocomp=:tipocomp and tipo=:tipo ";
+		global $cnx;
+		$parametros = array(':tipocomp'=>$tipocomp,':tipo'=>$tipo);
+		$pre = $cnx->prepare($sql);
+		$pre->execute($parametros);
+		return $pre;
+	}
 
 	function obtenerSerie($idserie){
 		$sql = "SELECT * FROM serie WHERE id=:idserie";
@@ -183,6 +191,15 @@ class clsCompartido{
 		$sql = "SELECT * FROM tipo_comprobante";
 		global $cnx;
 		return $cnx->query($sql);
+	}
+
+	function listarComprobantes1($tipo,$comp){
+		$sql = "SELECT * FROM tipo_comprobante as tc join serie as s on s.tipocomp=tc.codigo WHERE s.tipo=:tipo and s.tipocomp=:comp ";
+		global $cnx;
+		$parametros = array(':tipo'=>$tipo,':comp'=>$comp);
+		$pre = $cnx->prepare($sql);
+		$pre->execute($parametros);
+		return $pre;
 	}
 
 	function obtenerComprobante($codigo){
@@ -276,6 +293,16 @@ class clsCompartido{
 		$pre->execute();
 		return $pre;
 	}
+	function usuarioVenta($id)
+	{
+		$sql = "SELECT * FROM usuario where id=:id ";
+		global $cnx;
+		$parametros = array(':id'=>$id);
+		$pre = $cnx->prepare($sql);
+		$pre->execute($parametros);
+		return $pre;
+	}
+	
 
 }
 

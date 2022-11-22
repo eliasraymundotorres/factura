@@ -3,7 +3,7 @@
    Elaborado por: Intrasoft
    Autor: Elias Raymundo Torres
  */
-
+session_start();
 require('../fpdf/fpdf.php');
 include_once '../apifacturacion/ado/clsEmisor.php';
 require_once("../phpqrcode/qrlib.php");
@@ -27,6 +27,8 @@ $mostrar = $emisor->fetch(PDO::FETCH_NAMED);
 $tipo_comprobante = $objCompartido->obtenerComprobante($venta['tipocomp']);
 $tipo_comprobante = $tipo_comprobante->fetch(PDO::FETCH_NAMED);
 
+$usuarioVenta = $objCompartido->usuarioVenta($_SESSION['id']);
+$usuarioVenta = $usuarioVenta->fetch(PDO::FETCH_NAMED);
 //(*) agregado ==========
 $detalle = $objVenta->listarDetallePorVenta($_GET['id']);//(*) agregado
 
@@ -378,9 +380,13 @@ $pdf->SetMargins(0, 0 , 0);
    // $resumen=$verToken['qr'];
     //$pdf->MultiCell($ancho,3,'Resumen: ',0,'L');
      $pdf->Cell($ancho/4,3,'Cajero: ',0,0,'L');
-    $pdf->Cell($ancho*3/4,3,'Vendedor ',0,1,'L');
+    $pdf->Cell($ancho*3/4,3,utf8_decode($usuarioVenta['nombre']),0,1,'L');
     $pdf->Cell($ancho/4,3,'Hora: ',0,0,'L');
     $pdf->Cell($ancho*3/4,3,date('h:i A'),0,1,'L');
+    $pdf->Cell($ancho/3,3,'Observaciones: ',0,0,'L');
+    $pdf->SetFont('Arial','',5);
+    $pdf->Cell($ancho*2/3,3,utf8_decode($venta['observaciones']),0,1,'L');
+    $pdf->SetFont('Arial','',7);
 
     $ruc = $mostrar['ruc'];//(*) agregado
     $tipo_documento = $tipo_comprobante['codigo']; //factura

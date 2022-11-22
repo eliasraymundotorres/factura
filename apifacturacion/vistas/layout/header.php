@@ -118,7 +118,7 @@
                 <p>Catálogo</p>
               </a>
             </li>
-            <?php if($_SESSION['id']==1) { ?>
+            <?php if($_SESSION['tipo']==0) { ?>
             <li class="nav-item">
               <a href="?config" onclick="" class="nav-link <?php if($request=='config'){ echo 'active'; } ?>">
                 <i class="nav-icon fas fa-file"></i>
@@ -135,7 +135,7 @@
 
           <li class="nav-header">Facturación Electrónica</li>
           
-
+        <?php if($_SESSION['tipo']!=3) { ?>
          <li class="nav-item <?php if($request=='EnvioFactura' or $request=='EnvioBoleta' or $request=='EnvioNC' or $request=='EnvioND' or $request=='EnvioResumen' or $request=='EnvioBajas'){ echo 'menu-open'; } ?>">
             <a href="#" class="nav-link <?php if($request=='EnvioFactura' or $request=='EnvioBoleta' or $request=='EnvioNC' or $request=='EnvioND' or $request=='EnvioResumen' or $request=='EnvioBajas'){ echo 'active'; } ?>">
               <i class="nav-icon fas fa-copy"></i>
@@ -184,7 +184,7 @@
           </li> 
             </ul>
           </li>
-          <?php if($_SESSION['id']==1) { ?>
+         <?php } ?>
           <li class="nav-item <?php if($request=='FacturasBoletas'){ echo 'menu-open'; } ?>">
             <a href="#" class="nav-link <?php if($request=='FacturasBoletas'){ echo 'active'; } ?>">
               <i class="nav-icon far fa-envelope"></i>
@@ -214,7 +214,7 @@
               </li>
             </ul>
           </li>
-  <?php } ?>
+  
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

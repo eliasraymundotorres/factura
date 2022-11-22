@@ -29,6 +29,7 @@ if($verificar->rowCount()>0) {
 				$_SESSION['user'] = $mostrar['user'];
 				$_SESSION['id'] = $mostrar['id'];
 				$_SESSION['nombre'] = $mostrar['nombre'];
+				$_SESSION['tipo'] = $mostrar['tipo'];
 			  if($dias>10) {
 				echo 1;
 			  } else {

@@ -86,15 +86,18 @@ class GeneradorXML{
             </cac:RegistrationAddress>
          </cac:PartyLegalEntity>
       </cac:Party>
-   </cac:AccountingCustomerParty>
-   <cac:AllowanceCharge>
+   </cac:AccountingCustomerParty>';
+if($comprobante['descValor']>0) {
+  $xml .= '<cac:AllowanceCharge>
       <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
       <cbc:AllowanceChargeReasonCode>00</cbc:AllowanceChargeReasonCode>
       <cbc:MultiplierFactorNumeric>'.$comprobante['descPorcentaje'].'</cbc:MultiplierFactorNumeric>
       <cbc:Amount currencyID="'.$comprobante['moneda'].'">'.$comprobante['descValor'].'</cbc:Amount>
       <cbc:BaseAmount currencyID="'.$comprobante['moneda'].'">'.$comprobante['totalSinDescuento'].'</cbc:BaseAmount>
-   </cac:AllowanceCharge>
-   <cac:PaymentTerms>
+   </cac:AllowanceCharge>';
+}
+
+  $xml .= '<cac:PaymentTerms>
      <cbc:ID>FormaPago</cbc:ID>
      <cbc:PaymentMeansID>Contado</cbc:PaymentMeansID>
    </cac:PaymentTerms>
@@ -111,7 +114,7 @@ class GeneradorXML{
             </cac:TaxScheme>
          </cac:TaxCategory>
       </cac:TaxSubtotal>';
-
+     
       if($comprobante['total_opexoneradas']>0){
          $xml.='<cac:TaxSubtotal>
             <cbc:TaxableAmount currencyID="'.$comprobante['moneda'].'">'.$comprobante['total_opexoneradas'].'</cbc:TaxableAmount>

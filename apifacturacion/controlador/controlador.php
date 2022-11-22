@@ -27,8 +27,8 @@ function controlador($accion){
 	switch ($accion) {
 
 		case 'LISTAR_SERIES':
-			
-			$series = $objCompartido->listarSerie($_POST['tipocomp']);
+			session_start();
+			$series = $objCompartido->listarSerie1($_POST['tipocomp'],$_SESSION['tipo']);
 			$series = $series->fetchAll(PDO::FETCH_NAMED);
 			$series = array("series"=>$series);
 			echo json_encode($series);			
@@ -565,6 +565,14 @@ function controlador($accion){
 			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
 			$totalConDescuento = $total - $valorDescuento;
 
+            if(!empty($_POST['dni1']) and !empty($_POST['nombre_paciente']))
+			{
+				$observaciones = $_POST['dni1'].' '.$_POST['nombre_paciente'];
+			}
+			else {
+				$observaciones = '';
+			}
+
 			$idserie = $_POST['idserie'];
 
 			$seriex = $objCompartido->obtenerSerie($idserie);
@@ -586,7 +594,8 @@ function controlador($accion){
 					'descValor'		=> $valorDescuento,
 					'total'			=> $totalConDescuento,
 					'total_texto'	=> CantidadEnLetra($total),
-					'codcliente'	=> $idcliente
+					'codcliente'	=> $idcliente,
+					'observaciones' => $observaciones
 				);			
 
 			$objCompartido->actualizarSerie($idserie, $comprobante['correlativo']);

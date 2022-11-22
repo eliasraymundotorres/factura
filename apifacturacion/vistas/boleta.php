@@ -8,7 +8,7 @@ $listado = $objEmisor->consultarListaEmisores();
 $objCompartido = new clsCompartido();
 $monedas = $objCompartido->listarMonedas();
 
-$comprobantes = $objCompartido->listarComprobantes();
+$comprobantes = $objCompartido->listarComprobantes1($_SESSION['tipo'],'03');
 
 $documentos = $objCompartido->listarTipoDocumento();
 
@@ -78,10 +78,12 @@ $documentos = $objCompartido->listarTipoDocumento();
                                     <select class="form-control" name="tipocomp" id="tipocomp"
                                         onchange="ConsultarSerie()">
                                         <?php 
-				foreach ($comprobantes as $k => $fila) {
-					?>
+                                    foreach ($comprobantes as $k => $fila) {
+                                        
+                                        ?>
                                         <option value="<?=$fila['codigo']?>"><?=$fila['descripcion']?></option>
-                                        <?php } ?>
+                                    
+                                        <?php  } ?>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -140,11 +142,11 @@ $documentos = $objCompartido->listarTipoDocumento();
                                 <div class="form-group">
                                     <label>Nro. Doc</label>
                                     <div class="input-group">
-                                        <input class="form-control" type="text" name="nrodoc" id="nrodoc"
+                                        <input class="form-control" type="text" name="dni1" id="dni1"
                                             onkeyup="limpiar()" />
                                         <div class="input-group-addon">
                                             <button type="button" class="btn btn-default" id="btnBuscar"
-                                                onclick="ObtenerDatosEmpresa()">
+                                                onclick="ObtenerDNI()">
                                                 <li class="fa fa-search"></li>
                                             </button>
                                         </div>
@@ -153,8 +155,8 @@ $documentos = $objCompartido->listarTipoDocumento();
                                         obligatorio *</div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Nombre/Raz. Social</label>
-                                    <input class="form-control" type="text" name="razon_social" id="razon_social"
+                                    <label>Nombre del paciente</label>
+                                    <input class="form-control" type="text" name="nombre_paciente" id="nombre_paciente"
                                         onkeyup="limpiar()" />
                                     <div style="display:none; color:green; font-size: 10px;" id="txtRazonSocial">El
                                         campo es obligatorio *</div>
@@ -234,18 +236,11 @@ function selecciona() {
         $('#nrodoc').val('');
         $('#razon_social').val('');
         $('#pacientes').hide();
-
-    } else {
         if (tipo == 6) {
-            $('#nrodoc').attr('readonly', true);
-            $('#razon_social').attr('readonly', true);
-            $('#direccion').attr('readonly', true);
-
-            $('#btnBuscar').attr('disabled', true);
-            $('#nrodoc').val('00000000');
-            $('#razon_social').val('Sin documento');
-            $('#pacientes').show();
-        } else {
+            $('#pacientes').show(1000);
+        }
+    } else {
+         
             $('#nrodoc').attr('readonly', true);
             $('#razon_social').attr('readonly', true);
             $('#direccion').attr('readonly', true);
@@ -254,8 +249,35 @@ function selecciona() {
             $('#nrodoc').val('00000000');
             $('#razon_social').val('Sin documento');
             $('#pacientes').hide();
-        }
+        
     }
+}
+function ObtenerDNI() {
+    if ($("#dni1").val() != '') {
+        $.ajax({
+                method: 'GET',
+                url: 'app/apiDocumento.php',
+                data: {
+                    doc: $("#dni1").val(),
+                    'accion': 'DNI'
+                },
+                dataType: 'json'
+            })
+            .done(function(datos) {
+                // console.log(datos);
+                if (datos.nombre == '') {
+                    $('#nombre_paciente').val(datos.nombres);
+                } else {
+                    $('#nombre_paciente').val(datos.nombre);
+                }
+
+            })
+    } else {
+        alertify.alert("Atención!", "Escriba un número de documento.", function() {
+            alertify.message('OK');
+        });
+    }
+
 }
 
 function ConsultarSerie() {
@@ -378,14 +400,14 @@ function BuscarProducto() {
                 productos = json.result;
                 listado = '';
                 for (i = 0; i < productos.length; i++) {
-                    var precio = number_format(productos[i].precio_venta01, 2, '.', ',');
+                    var precio = number_format(productos[i].precio_venta01, 4, '.', ',');
                     listado = listado + '<tr><td>' + productos[i].codigo_02 +
                         '</td><td><textarea class="form-control" id="nom' + productos[i].id + '">' + productos[i]
                         .descripcion +
                         '</textarea> </td><td><input class="form-control" type="number" style="width:80px" value="1"  id="cant' +
                         productos[i].id + '"> </td><td><input class="form-control" style="width:80px" id="precio' +
                         productos[i].id + '" value="' + precio +
-                        '" /></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\'' +
+                        '"  readonly/></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\'' +
                         productos[i].id + '\')"><i class="fa fa-plus"></i></button></td></tr>';
                 }
                 $("#div_productos").html(listado);
@@ -492,8 +514,7 @@ function GuardarVenta() {
                 $('#totalboton').html('0.00');
                 $('#voucher2').html("<embed src='reportes/tk_impresion.php?id=" + html.id +
                     "' type='application/pdf' width='100%' height='600px' />");
-                $('#a42').html("<embed src='reportes/comprobante.php?id=" + html.id +
-                    "' type='application/pdf' width='100%' height='600px' />");
+                
             });
 
     }

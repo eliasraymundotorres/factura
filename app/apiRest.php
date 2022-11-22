@@ -9,10 +9,10 @@ $accion = $_GET['accion'];
 switch ($accion) {
     case 'BUSCAR_PRODUCTO':
         $producto = $_GET['filtro'];
-        if($_SESSION['id']==1) {
-            $is = 1;
+        if($_SESSION['tipo']==1) {
+            $is = 1; //servicios
         } else {
-            $is = 0;
+            $is = 0; // farmacia
         }
         // Iniciar llamada a API
         $curl = curl_init();
