@@ -206,17 +206,20 @@ function CheckPageBreak($h)
 }
 
 $ancho = $mostrar['voucher'];
-$pdf = new PDF('P','mm',array($ancho,155+($contador*5)));
+//$pdf = new PDF('P','mm',array($ancho,155+($contador*5)));
+$pdf = new PDF('P','mm',array($ancho,350));
 $pdf->AliasNbPages();
 $pdf->AddPage();
 #Establecemos los márgenes izquierda, arriba y derecha:
 $pdf->SetMargins(0, 0 , 0);
     /* CABECERA */
     $pdf->SetFont('Times','b',9);
-   // $pdf->SetXY(25, 5);
+    $Y = $pdf->getY();
+    $pdf->SetXY($ancho*1/8, 6);
     $pdf->MultiCell($ancho*3/4,4, utf8_decode(EMPRESA_COMERCIAL),0,'C');
     //$pdf->SetXY(25, 10);
   //  $pdf->Cell($ancho,3,"EMPRESA:",0,1,'C');
+    
    // $pdf->SetXY(25, 13);
     $pdf->SetFont('Courier','b',6);
     $pdf->Cell($ancho,3, 'RUC:'.utf8_decode(RUC) ,0,1,'C');

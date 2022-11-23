@@ -209,7 +209,7 @@ function controlador($accion){
 			 </script>
 			";
 
-          echo $msj;
+          echo $msj; 
 			//------------ FIN DE LA TABLITA DEL CARRITO ------//
 			break;	
 

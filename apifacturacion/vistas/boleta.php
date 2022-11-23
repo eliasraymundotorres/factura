@@ -128,7 +128,7 @@ $documentos = $objCompartido->listarTipoDocumento();
                                 <div class="form-group">
                                     <label>Nombre/Raz. Social</label>
                                     <input class="form-control" type="text" name="razon_social" id="razon_social"
-                                        onkeyup="limpiar()" readonly />
+                                        onkeyup="limpiar()" />
                                     <div style="display:none; color:green; font-size: 10px;" id="txtRazonSocial">El
                                         campo es obligatorio *</div>
                                 </div>
@@ -229,7 +229,6 @@ function selecciona() {
     var tipo = $('#tipodoc').val();
     if (tipo != 0) {
         $('#nrodoc').attr('readonly', false);
-        $('#razon_social').attr('readonly', false);
         $('#direccion').attr('readonly', false);
 
         $('#btnBuscar').attr('disabled', false);
@@ -242,7 +241,6 @@ function selecciona() {
     } else {
          
             $('#nrodoc').attr('readonly', true);
-            $('#razon_social').attr('readonly', true);
             $('#direccion').attr('readonly', true);
 
             $('#btnBuscar').attr('disabled', true);

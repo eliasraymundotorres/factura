@@ -118,7 +118,7 @@
                 <p>Catálogo</p>
               </a>
             </li>
-            <?php if($_SESSION['id']==1) { ?>
+            <?php if($_SESSION['tipo']==0) { ?>
             <li class="nav-item">
               <a href="?config" onclick="" class="nav-link <?php if($request=='config'){ echo 'active'; } ?>">
                 <i class="nav-icon fas fa-file"></i>
@@ -134,49 +134,57 @@
             </li>
 
           <li class="nav-header">Facturación Electrónica</li>
-
-          <?php if( strpos($_SESSION['user'], "admin") !== false ) { ?>
-          <li class="nav-item">
-            <a href="?EnvioFactura" class="nav-link <?php if($request=='EnvioFactura'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Factura</p>
+          
+        <?php if($_SESSION['tipo']!=3) { ?>
+         <li class="nav-item <?php if($request=='EnvioFactura' or $request=='EnvioBoleta' or $request=='EnvioNC' or $request=='EnvioND' or $request=='EnvioResumen' or $request=='EnvioBajas'){ echo 'menu-open'; } ?>">
+            <a href="#" class="nav-link <?php if($request=='EnvioFactura' or $request=='EnvioBoleta' or $request=='EnvioNC' or $request=='EnvioND' or $request=='EnvioResumen' or $request=='EnvioBajas'){ echo 'active'; } ?>">
+              <i class="nav-icon fas fa-copy"></i>
+              <p>
+                Emitir
+                <i class="fas fa-angle-left right"></i>
+                <span class="badge badge-info right">6</span>
+              </p>
             </a>
-          </li>
-          <?php } ?>
-          <li class="nav-item">
-            <a href="?EnvioBoleta" class="nav-link <?php if($request=='EnvioBoleta'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Boleta</p>
-            </a>
-          </li>
-          <?php if( strpos($_SESSION['user'], "admin") !== false ) { ?>
-          <li class="nav-item">
-            <a href="?EnvioNC" class="nav-link <?php if($request=='EnvioNC'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Nota Credito</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="?EnvioND" class="nav-link <?php if($request=='EnvioND'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Nota Debito</p>
-            </a>
-          </li>
-          <?php } ?>
-          <li class="nav-item">
-            <a href="?EnvioResumen" class="nav-link <?php if($request=='EnvioResumen'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-list"></i>
-              <p>Envío de Resúmenes</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="?EnvioBajas" class="nav-link <?php if($request=='EnvioBajas'){ echo 'active'; } ?>">
-              <i class="nav-icon fas fa-list"></i>
-              <p>Baja de Facturas</p>
-            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+              <a href="?EnvioFactura" class="nav-link <?php if($request=='EnvioFactura'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Factura</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?EnvioBoleta" class="nav-link <?php if($request=='EnvioBoleta'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Boleta</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?EnvioNC" class="nav-link <?php if($request=='EnvioNC'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Nota Credito</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?EnvioND" class="nav-link <?php if($request=='EnvioND'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Nota Debito</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?EnvioResumen" class="nav-link <?php if($request=='EnvioResumen'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-list"></i>
+                <p>Envío de Resúmenes</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?EnvioBajas" class="nav-link <?php if($request=='EnvioBajas'){ echo 'active'; } ?>">
+                <i class="nav-icon fas fa-list"></i>
+                <p>Baja de Facturas</p>
+              </a>
           </li> 
-          
-          
+            </ul>
+          </li>
+         <?php } ?>
           <li class="nav-item <?php if($request=='FacturasBoletas'){ echo 'menu-open'; } ?>">
             <a href="#" class="nav-link <?php if($request=='FacturasBoletas'){ echo 'active'; } ?>">
               <i class="nav-icon far fa-envelope"></i>
