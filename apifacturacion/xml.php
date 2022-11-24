@@ -165,8 +165,20 @@ if($comprobante['descValor']>0) {
 	            <cbc:PriceAmount currencyID="'.$comprobante['moneda'].'">'.$v['precio_unitario'].'</cbc:PriceAmount>
 	            <cbc:PriceTypeCode>'.$v['tipo_precio'].'</cbc:PriceTypeCode>
 	         </cac:AlternativeConditionPrice>
-	      </cac:PricingReference>
-	      <cac:TaxTotal>
+	      </cac:PricingReference>';
+      
+         if($v['descuento']>0) 
+         {
+            $xml .= '<cac:AllowanceCharge>
+               <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+                <cbc:AllowanceChargeReasonCode>00</cbc:AllowanceChargeReasonCode>
+                <cbc:MultiplierFactorNumeric>'.$v['porcentaje_desc'].'</cbc:MultiplierFactorNumeric>
+                <cbc:Amount currencyID="'.$comprobante['moneda'].'">'.$v['descuento'].'</cbc:Amount>
+                <cbc:BaseAmount currencyID="'.$comprobante['moneda'].'">'.$v['valorSinDescuento'].'</cbc:BaseAmount>
+            </cac:AllowanceCharge>
+            ';
+         }
+	      $xml .='<cac:TaxTotal>
 	         <cbc:TaxAmount currencyID="'.$comprobante['moneda'].'">'.$v['igv'].'</cbc:TaxAmount>
 	         <cac:TaxSubtotal>
 	            <cbc:TaxableAmount currencyID="'.$comprobante['moneda'].'">'.$v['valor_total'].'</cbc:TaxableAmount>

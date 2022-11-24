@@ -79,13 +79,17 @@ function controlador($accion){
              
 		  //===============
 			// ----- INICIO LOGICA DE CARRITO ----- //
-
 			$producto = $objCompartido->obtenerProducto($_POST['codigo']);
 			$producto = $producto->fetch(PDO::FETCH_NAMED);
 
-			if(isset($_POST['precio'])){
-				$producto['precio'] = $_POST['precio'];
-			}
+			//calcular los descuentos
+			if(!empty($_POST['descuento'])) {
+				$porcentajeItem = $_POST['descuento']/100;
+				$descuentoItem = $producto['precio']*$_POST['cantidad']*$porcentajeItem;
+			  } else {
+				$descuentoItem = 0;
+			  }
+			// ============
 
 			session_start();
 
@@ -111,6 +115,8 @@ function controlador($accion){
 						'codigo'=>$producto['codigo'],
 						'nombre'=>$_POST['nombres'],
 						'precio'=>$producto['precio'],
+						'porcentajeDescuento'=>$porcentajeItem,
+						'descuento'=>$descuentoItem,
 						'unidad'=>$producto['unidad'],
 						'codigoafectacion'=>$producto['codigoafectacion'],
 						'cantidad'=>$cantidad
@@ -118,10 +124,12 @@ function controlador($accion){
 
 			}else{
 				$carrito[$item]['cantidad']+=$cantidad;
+				$carrito[$item]['descuento']+=$descuentoItem;
 			}
 
 			$_SESSION['carrito'] = $carrito;
 
+			
 			//------------------ FIN LOGICA DE CARRITO ---------- //
 
 			//-------------- INICIO DE CALCULO DE TOTALES -------//
@@ -130,25 +138,27 @@ function controlador($accion){
 			$op_inafectas=0.00;
 			$igv;
 			$igv_porcentaje=0.18;
+			$descuentoTotal = 0.00;
 
 			foreach ($carrito as $K => $v) {
+				$descuentoTotal += $v['descuento'];
 				if($v['codigoafectacion']=='10'){
-					$op_gravadas = $op_gravadas+$v['precio']*$v['cantidad'];
+					$op_gravadas = $op_gravadas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}
 
 				if($v['codigoafectacion']=='20'){
-					$op_exoneradas = $op_exoneradas+$v['precio']*$v['cantidad'];
+					$op_exoneradas = $op_exoneradas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}
 
 				if($v['codigoafectacion']=='30'){
-					$op_inafectas = $op_inafectas+$v['precio']*$v['cantidad'];
+					$op_inafectas = $op_inafectas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}												
 			}
 
 			$igv = $op_gravadas*$igv_porcentaje;
 
 			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
-
+            $total1 = number_format($total,1,'.',',');
 			//----- FIN DEL CALCULO DE TOTALES --------//
 
 			//------ INICIO DE LA TABLITA DEL CARRITO ---- //
@@ -160,8 +170,9 @@ function controlador($accion){
 				   <th style='width:5%'>ITEM</th>
 				   <th style='width:5%'>CANT</th>
 				   <th style='width:67%'>PRODUCTO</th>
-				   <th style='width:10%'>V/U</th>
-				   <th style='width:10%'>SUBT</th>
+				   <th style='width:7%'>V/U</th>
+				   <th style='width:7%'>DESC</th>
+				   <th style='width:6%'>SUBT</th>
 				   <th style='width:3%'></th>
 				</tr>";
 			foreach($carrito as $k=>$v){
@@ -171,41 +182,35 @@ function controlador($accion){
 					<td>".$v['cantidad']."</td>
 					<td>".$v['nombre']."</td>
 					<td>".$v['precio']."</td>
-					<td>".($v['precio']*$v['cantidad'])."</td>
+					<td>".$v['descuento']."</td>
+					<td>".($v['precio']*$v['cantidad']-$v['descuento'])."</td>
 					<td><a href='javascript:CancelarItem(".$k.")'><i class='fa fa-trash' style='color:red; font-size:10px'></i></a></td>
 				</tr>";
 			}
 
 			$msj .= "
 			  <tr>
-			     <td colspan='4' align='right'>OP. GRAVADAS</td><td>".$op_gravadas."</td>
+			     <td colspan='5' align='right'>OP. GRAVADAS</td><td>".$op_gravadas."</td>
 			  </tr>
 			  <tr>
-			    <td colspan='4' align='right'>IGV(18%)</td><td>".$igv."</td>
+			    <td colspan='5' align='right'>IGV(18%)</td><td>".$igv."</td>
 			  </tr>			
 			  <tr>
-			    <td colspan='4' align='right'>OP. EXONERADAS</td><td>".$op_exoneradas."</td>
+			    <td colspan='5' align='right'>OP. EXONERADAS</td><td>".$op_exoneradas."</td>
 			  </tr>
 			  <tr>
-			    <td colspan='4' align='right'>OP. INAFECTAS</td><td>".$op_inafectas."</td>
+			    <td colspan='5' align='right'>OP. INAFECTAS</td><td>".$op_inafectas."</td>
 			   </tr>	
 			   <tr>
-			    <td colspan='4' align='right'>DESCUENTO. % <input class='form-control' onkeyup='descuentos()' style='width: 80px;' name='porcentaje' id='porcentaje' value='0' ></td><td><span id='valorDesc'>0.00</span></td>
+			    <td colspan='5' align='right'>DESCUENTO</td><td>".$descuentoTotal."</td>
 			   </tr>						
 			  <tr>
-			    <td colspan='4' align='right'><b>TOTAL</b></td><td><b>S/<span id='totales'>".number_format($total,2,'.',',')."</span></b></td>
+			    <td colspan='5' align='right'><b>TOTAL</b></td><td><b>S/<span id='totales'>".$total1."</span></b></td>
 			  </tr>		
 			</table>
 			</div>
 			<script> 
-			  $('#totalboton').html(".$total."); 
-			   function descuentos()
-			   {
-				 var porcentaje = $('#porcentaje').val();
-				 var newTotal = ".$total."-(porcentaje*".$total."/100);
-				  
-				 $('#totales').html(number_format(newTotal,2,'.',','));
-			   } 
+			  $('#totalboton').html(".$total1."); 
 			 </script>
 			";
 
@@ -228,25 +233,27 @@ function controlador($accion){
 			$op_inafectas=0.00;
 			$igv;
 			$igv_porcentaje=0.18;
+			$descuentoTotal = 0.00;
 
 			foreach ($carrito as $K => $v) {
+				 $descuentoTotal = $descuentoTotal + $v['descuento'];
 				if($v['codigoafectacion']=='10'){
-					$op_gravadas = $op_gravadas+$v['precio']*$v['cantidad'];
+					$op_gravadas = $op_gravadas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}
 
 				if($v['codigoafectacion']=='20'){
-					$op_exoneradas = $op_exoneradas+$v['precio']*$v['cantidad'];
+					$op_exoneradas = $op_exoneradas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}
 
 				if($v['codigoafectacion']=='30'){
-					$op_inafectas = $op_inafectas+$v['precio']*$v['cantidad'];
+					$op_inafectas = $op_inafectas+($v['precio']*$v['cantidad']-$v['descuento']);
 				}												
 			}
 
 			$igv = $op_gravadas*$igv_porcentaje;
 
 			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
-
+            $total1 = number_format($total,1,'.',',');
 			//----- FIN DEL CALCULO DE TOTALES --------//
 
 			//------ INICIO DE LA TABLITA DEL CARRITO ---- //
@@ -258,8 +265,9 @@ function controlador($accion){
 				   <th style='width:5%'>ITEM</th>
 				   <th style='width:5%'>CANT</th>
 				   <th style='width:67%'>PRODUCTO</th>
-				   <th style='width:10%'>V/U</th>
-				   <th style='width:10%'>SUBT</th>
+				   <th style='width:7%'>V/U</th>
+				   <th style='width:7%'>DESC</th>
+				   <th style='width:6%'>SUBT</th>
 				   <th style='width:3%'></th>
 				</tr>";
 			foreach($carrito as $k=>$v){
@@ -269,41 +277,36 @@ function controlador($accion){
 					<td>".$v['cantidad']."</td>
 					<td>".$v['nombre']."</td>
 					<td>".$v['precio']."</td>
-					<td>".($v['precio']*$v['cantidad'])."</td>
+					<td>".$v['descuento']."</td>
+					<td>".($v['precio']*$v['cantidad']-$v['descuento'])."</td>
 					<td><a href='javascript:CancelarItem(".$k.")'><i class='fa fa-trash' style='color:red; font-size:10px'></i></a></td>
 				</tr>";
 			}
 
 			$msj .= "
 			  <tr>
-			     <td colspan='4' align='right'>OP. GRAVADAS</td><td>".$op_gravadas."</td>
+			     <td colspan='5' align='right'>OP. GRAVADAS</td><td>".$op_gravadas."</td>
 			  </tr>
 			  <tr>
-			    <td colspan='4' align='right'>IGV(18%)</td><td>".$igv."</td>
+			    <td colspan='5' align='right'>IGV(18%)</td><td>".$igv."</td>
 			  </tr>			
 			  <tr>
-			    <td colspan='4' align='right'>OP. EXONERADAS</td><td>".$op_exoneradas."</td>
+			    <td colspan='5' align='right'>OP. EXONERADAS</td><td>".$op_exoneradas."</td>
 			  </tr>
 			  <tr>
-			    <td colspan='4' align='right'>OP. INAFECTAS</td><td>".$op_inafectas."</td>
+			    <td colspan='5' align='right'>OP. INAFECTAS</td><td>".$op_inafectas."</td>
 			   </tr>
 			   <tr>
-			    <td colspan='4' align='right'>DESCUENTO. % <input class='form-control' onkeyup='descuentos()' style='width: 80px;' name='porcentaje' id='porcentaje' value='0' ></td><td><span id='valorDesc'>0.00</span></td>
+			    <td colspan='5' align='right'>DESCUENTO</td><td>".$descuentoTotal."</td>
 			   </tr>						
 			  <tr>
-			    <td colspan='4' align='right'><b>TOTAL</b></td><td><b>S/<span id='totales'>".number_format($total,2,'.',',')."</span></b></td>
+			    <td colspan='5' align='right'><b>TOTAL</b></td><td><b>S/<span id='totales'>".$total1."</span></b></td>
 			  </tr>		
 			</table>
 			</div>
 			<script> 
-			  $('#totalboton').html(".$total."); 
-			   function descuentos()
-			   {
-				 var porcentaje = $('#porcentaje').val();
-				 var newTotal = ".$total."-(porcentaje*".$total."/100);
-				  
-				 $('#totales').html(number_format(newTotal,2,'.',','));
-			   } 
+			  $('#totalboton').html(".$total1."); 
+			   
 			 </script>
 			";
 
@@ -506,7 +509,7 @@ function controlador($accion){
 			$op_exoneradas=0.00;
 			$op_inafectas=0.00;
 			$igv = 0;
-
+            $valorDescuento = $totalSinDescuento = 0;
 			foreach ($carrito as $k => $v) {
 
 				$producto = $objCompartido->obtenerProducto($v['codigo']);
@@ -532,8 +535,11 @@ function controlador($accion){
 					'tipo_precio'		=> $producto['tipo_precio'], //ya incluye igv
 					'igv'				=> $igv_detalle,
 					'porcentaje_igv'	=> $igv_porcentaje*100,
-					'valor_total'		=> $v['precio']*$v['cantidad'],
-					'importe_total'		=> $v['precio']*$v['cantidad']*$factor_porcentaje,
+					'porcentaje_desc'	=> $v['porcentajeDescuento'],
+					'descuento'			=> $v['descuento'],
+					'valorSinDescuento'	=> $v['precio']*$v['cantidad'],
+					'valor_total'		=> ($v['precio']*$v['cantidad'])-$v['descuento'],
+					'importe_total'		=> ($v['precio']*$v['cantidad']-$v['descuento'])*$factor_porcentaje,
 					'unidad'			=> $v['unidad'],//unidad,
 					'codigo_afectacion_alt'	=> $producto['codigoafectacion'],
 					'codigo_afectacion'	=> $afectacion['codigo_afectacion'],
@@ -557,13 +563,13 @@ function controlador($accion){
 					$op_inafectas = $op_inafectas + $itemx['valor_total'];
 				}
 
-				$igv = $igv + $igv_detalle;				
+				$igv = $igv + $igv_detalle;
+				$valorDescuento += $itemx['descuento'];	
+				$totalSinDescuento += $itemx['valor_unitario']*$itemx['valorSinDescuento'];			
 			}
 
-			$porcentajeDescuento = $_POST['porcentaje']/100;
-			$valorDescuento = $op_exoneradas*$porcentajeDescuento;
+			$porcentajeDescuento = $_POST['desc']/100;
 			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
-			$totalConDescuento = $total - $valorDescuento;
 
             if(!empty($_POST['dni1']) and !empty($_POST['nombre_paciente']))
 			{
@@ -589,10 +595,10 @@ function controlador($accion){
 					'igv'			=> $igv,
 					'total_opexoneradas'	=> $op_exoneradas,
 					'total_opinafectas'	=> $op_inafectas,
-					'totalSinDescuento'	=> $total,
+					'totalSinDescuento'	=> $totalSinDescuento,
 					'descPorcentaje'=> $porcentajeDescuento,
 					'descValor'		=> $valorDescuento,
-					'total'			=> $totalConDescuento,
+					'total'			=> number_format($total,1,'.',','),
 					'total_texto'	=> CantidadEnLetra($total),
 					'codcliente'	=> $idcliente,
 					'observaciones' => $observaciones

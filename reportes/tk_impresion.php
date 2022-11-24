@@ -57,7 +57,6 @@ define('DIRECCION', $direccion);
 define('UBIGEO', $distrito.'-'.$provincia.'-'.$departamento);
 
 
-
 //COMPROBANTE
 class PDF extends FPDF
 {

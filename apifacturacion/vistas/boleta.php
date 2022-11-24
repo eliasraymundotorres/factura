@@ -71,6 +71,16 @@ $documentos = $objCompartido->listarTipoDocumento();
                                         <?php } ?>
                                     </select>
                                 </div>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Descuento</label>
+                                    <div class="input-group mb-3">
+                                      <input type="text" class="form-control" placeholder="Escriba el porcentaje del descuento" name="desc" id="desc" onkeypress="return valideKey(event);">
+                                      <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2">%</span>
+                                      </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -224,6 +234,19 @@ $(document).ready(function() {
     ConsultarSerie();
     $('#pacientes').hide();
 });
+function valideKey(evt){
+    
+    // code is the decimal ASCII representation of the pressed key.
+    var code = (evt.which) ? evt.which : evt.keyCode;
+    
+    if(code==8) { // backspace.
+      return true;
+    } else if(code>=48 && code<=57) { // is a number.
+      return true;
+    } else{ // other keys.
+      return false;
+    }
+}
 
 function selecciona() {
     var tipo = $('#tipodoc').val();
@@ -416,7 +439,7 @@ function BuscarProducto() {
     }
 }
 
-function AgregarCarrito(codigo, precio, i, nom) {
+function AgregarCarrito(codigo, precio, i, nom, desc) {
 
     $.ajax({
             method: "POST",
@@ -426,7 +449,8 @@ function AgregarCarrito(codigo, precio, i, nom) {
                 "precio": precio,
                 "codigo": codigo,
                 "cantidad": i,
-                "nombres": nom
+                "nombres": nom,
+                "descuento": desc
             }
         })
         .done(function(html) {
@@ -438,18 +462,20 @@ function guardarProducto(codigo) {
     var i = $('#cant' + codigo).val();
     var nom = $('#nom' + codigo).val();
     var precio = $("#precio" + codigo).val();
+    var desc = $('#desc').val();
     $.ajax({
             method: "GET",
             url: 'app/apiRest.php',
             data: {
                 "accion": "CODIGO_PRODUCTO",
-                "codigo": codigo
+                "codigo": codigo,
+                "descuento": desc
             }
         })
         .done(function(html) {
             //respuesta
             console.log(html);
-            AgregarCarrito(codigo, precio, i, nom);
+            AgregarCarrito(codigo, precio, i, nom, desc);
         });
 }
 
@@ -459,7 +485,8 @@ function MostrarCarrito() {
             method: "POST",
             url: 'apifacturacion/controlador/controlador.php',
             data: {
-                "accion": "MOSTRAR_CARRITO"
+                "accion": "MOSTRAR_CARRITO",
+                "descuento": $('#desc').val()
             }
         })
         .done(function(html) {

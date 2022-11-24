@@ -4,8 +4,8 @@ require_once("conexion.php");
 class clsVenta{
 
 	function insertarDetalle($idventa,$detalle){
-		$sql = "INSERT INTO detalle(id,idventa, item, idproducto, cantidad, valor_unitario, precio_unitario, igv, porcentaje_igv, valor_total, importe_total,descripcion)
-			VALUES (NULL, :idventa, :item, :idproducto, :cantidad, :valor_unitario, :precio_unitario, :igv, :porcentaje_igv, :valor_total, :importe_total,:descripcion)";
+		$sql = "INSERT INTO detalle(id,idventa, item, idproducto, cantidad, valor_unitario, precio_unitario, igv, porcentaje_igv, descuento, valor_total, importe_total,descripcion)
+			VALUES (NULL, :idventa, :item, :idproducto, :cantidad, :valor_unitario, :precio_unitario, :igv, :porcentaje_igv, :descuento, :valor_total, :importe_total,:descripcion)";
 	
 			global $cnx;
 			$pre = $cnx->prepare($sql);
@@ -20,6 +20,7 @@ class clsVenta{
 					':precio_unitario'=>$v['precio_unitario'],
 					':igv'			=>$v['igv'],
 					':porcentaje_igv'=>$v['porcentaje_igv'],
+					':descuento'	=>$v['descuento'],
 					':valor_total'	=> $v['valor_total'],
 					':importe_total'=> $v['importe_total'],
 					':descripcion' =>$v['descripcion']
