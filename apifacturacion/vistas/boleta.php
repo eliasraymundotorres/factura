@@ -107,6 +107,13 @@ $documentos = $objCompartido->listarTipoDocumento();
                                     <label>Correlativo</label>
                                     <input class="form-control" type="number" name="correlativo" id="correlativo" />
                                 </div>
+                            <?php if($_SESSION['tipo'] == 2) { ?>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Observaciones</label>
+                                    <textarea class="form-control" rows="2" cols="" name="obs" id="obs"></textarea>
+                                </div>
+                                <?php } ?>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -184,6 +191,7 @@ $documentos = $objCompartido->listarTipoDocumento();
                                         </button>
                                     </div>
                                 </div>
+                                <input type="hidden" name="active" id="active">
                                 <div class="col-md-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover">
@@ -233,6 +241,7 @@ $(document).ready(function() {
     $('#razon_social').val('Sin documento');
     ConsultarSerie();
     $('#pacientes').hide();
+    active();
 });
 function valideKey(evt){
     
@@ -403,10 +412,26 @@ function ruc() {
 
 }
 
+function active()
+{
+    $.ajax({
+        method: 'POST',
+        url: 'apifacturacion/controlador/controlador.php',
+        data: {
+            'accion': 'ACTIVE'
+        }
+    })
+    .done(function(datos) {
+        // console.log(datos);
+        $('#active').val(datos);
+    })
+  
+    
+}
 
 function BuscarProducto() {
-
     if ($("#producto").val() != '' || $("#producto").val() != null) {
+        var active = $('#active').val();
         $.ajax({
                 method: "GET",
                 url: 'app/apiRest.php',
@@ -428,7 +453,7 @@ function BuscarProducto() {
                         '</textarea> </td><td><input class="form-control" type="number" style="width:80px" value="1"  id="cant' +
                         productos[i].id + '"> </td><td><input class="form-control" style="width:80px" id="precio' +
                         productos[i].id + '" value="' + precio +
-                        '"  readonly/></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\'' +
+                        '"  '+active+'/></td><td><button type="button" class="btn btn-primary" onclick="guardarProducto(\'' +
                         productos[i].id + '\')"><i class="fa fa-plus"></i></button></td></tr>';
                 }
                 $("#div_productos").html(listado);
@@ -527,6 +552,7 @@ function GuardarVenta() {
     var validar = validando1();
 
     if (validar == '') {
+        $('#btnEnviarBoleta').attr('disabled',true);
         $.ajax({
                 method: "POST",
                 url: 'apifacturacion/controlador/controlador.php',
@@ -539,7 +565,7 @@ function GuardarVenta() {
                 $('#totalboton').html('0.00');
                 $('#voucher2').html("<embed src='reportes/tk_impresion.php?id=" + html.id +
                     "' type='application/pdf' width='100%' height='600px' />");
-                
+                    $('#btnEnviarBoleta').attr('disabled',false);
             });
 
     }

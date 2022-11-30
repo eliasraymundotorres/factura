@@ -302,7 +302,22 @@ class clsCompartido{
 		$pre->execute($parametros);
 		return $pre;
 	}
-	
+	//agregar usuarios
+	function agregarUsuario($datos)
+	{
+		$sql = "INSERT INTO usuario(nombre,user,clave,estado,tipo) values(:nombre,:user,:clave,:estado,:tipo) ";
+		global $cnx;
+		$parametros = array(
+			':nombre'=>$datos['nombre'],
+			':user'=>$datos['user'],
+			':clave'=>$datos['clave'],
+			':estado'=>$datos['estado'],
+			':tipo'=>$datos['tipo']
+		);
+		$pre = $cnx->prepare($sql);
+		$pre->execute($parametros);
+		return $pre;
+	}
 
 }
 

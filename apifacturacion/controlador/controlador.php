@@ -85,9 +85,10 @@ function controlador($accion){
 			//calcular los descuentos
 			if(!empty($_POST['descuento'])) {
 				$porcentajeItem = $_POST['descuento']/100;
-				$descuentoItem = $producto['precio']*$_POST['cantidad']*$porcentajeItem;
+				$descuentoItem = $_POST['precio']*$_POST['cantidad']*$porcentajeItem;
 			  } else {
 				$descuentoItem = 0;
+				$porcentajeItem = 0;
 			  }
 			// ============
 
@@ -114,7 +115,7 @@ function controlador($accion){
 				$carrito[$item] = array(
 						'codigo'=>$producto['codigo'],
 						'nombre'=>$_POST['nombres'],
-						'precio'=>$producto['precio'],
+						'precio'=>$_POST['precio'],
 						'porcentajeDescuento'=>$porcentajeItem,
 						'descuento'=>$descuentoItem,
 						'unidad'=>$producto['unidad'],
@@ -568,7 +569,11 @@ function controlador($accion){
 				$totalSinDescuento += $itemx['valor_unitario']*$itemx['valorSinDescuento'];			
 			}
 
-			$porcentajeDescuento = $_POST['desc']/100;
+			if(!empty($_POST['desc'])) {
+			  $porcentajeDescuento = $_POST['desc']/100;
+			} else {
+				$porcentajeDescuento = 0;	
+			}
 			$total = $op_gravadas + $op_exoneradas + $op_inafectas + $igv;
 
             if(!empty($_POST['dni1']) and !empty($_POST['nombre_paciente']))
@@ -577,6 +582,12 @@ function controlador($accion){
 			}
 			else {
 				$observaciones = '';
+			}
+
+			if(!empty($_POST['obs'])) {
+               $obs = $_POST['obs'];
+			} else {
+			   $obs = '';
 			}
 
 			$idserie = $_POST['idserie'];
@@ -601,7 +612,9 @@ function controlador($accion){
 					'total'			=> number_format($total,1,'.',','),
 					'total_texto'	=> CantidadEnLetra($total),
 					'codcliente'	=> $idcliente,
-					'observaciones' => $observaciones
+					'observaciones' => $observaciones,
+					'obs'			=> $obs,
+					'user_id'		=> $_SESSION['id']
 				);			
 
 			$objCompartido->actualizarSerie($idserie, $comprobante['correlativo']);
@@ -1349,6 +1362,17 @@ function controlador($accion){
 			break;
 		case 'ACTUALIZAR_SERVIDOR':
 			$objEmisor->actualizarServidor($_POST['servidor']);
+			break;
+		case 'ACTIVE':
+			session_start();
+			if($_SESSION['tipo'] == 1) {
+				$msj = 'readonly';
+			} else {
+				$msj = '';
+			}
+			
+			echo $msj;
+
 			break;
 		
 		default:

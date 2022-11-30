@@ -37,7 +37,31 @@ if(isset($_POST['fi']) && isset($_POST['ff']) && $_POST['fi']!='' && $_POST['ff'
               		</div>
               	</form>	
          </div>
-         
+    <?php if( $_SESSION['tipo'] == 3 ) { ?>     
+         <div class="col-md-3">
+           <form method="post" action="?FacturasBoletas">
+            <div class="form-group">
+              <label>Usuarios</label>
+              <div class="input-group">
+                <select class="custom-select" id="user" name="user">
+                  <option selected>[Seleccione usuario]</option>
+                  <?php 
+                    $listar = $objVenta->listaUsuarios();
+                    foreach ($listar as $k => $usuario) {
+                      echo '
+                          <option value="'.$usuario['id'].'">'.$usuario['nombre'].'</option>
+                      ';
+                    }
+                  ?>
+                </select>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                </div>
+              </div>
+            </div>
+           </form>
+         </div>
+    <?php } ?>   
         <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Comprobantes enviados a SUNAT</h3>
@@ -70,8 +94,10 @@ if(isset($_POST['fi']) && isset($_POST['ff']) && $_POST['fi']!='' && $_POST['ff'
                     <?php 
                     if(isset($_POST['fi']) && isset($_POST['ff']) && $_POST['fi']!='' && $_POST['ff']){
                       $mostrar = $objVenta->mostrarVentasPorFecha($fi,$ff);
+                     } elseif (isset($_POST['user'])) {
+                        $mostrar = $objVenta->mostrarVentasPorUsuario($_POST['user']);
                      } else {
-                      $mostrar = $objVenta->mostrarVentas();
+                        $mostrar = $objVenta->mostrarVentas();
                      }
                     foreach ($mostrar as $k => $value) {
                       $estado = $value['feestado'];

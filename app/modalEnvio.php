@@ -14,7 +14,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Salir <ion-icon name="close-circle-outline"></ion-icon></button>
-        <button type="button" class="btn btn-warning" onclick="enviarFactura()">Enviar <ion-icon name="enter-outline"></ion-icon></button>
+        <button type="button" class="btn btn-warning" ondblclick="enviarFactura()" id="btnEnviarBoleta">Enviar <ion-icon name="enter-outline"></ion-icon></button>
       </div>
     </div>
   </div>

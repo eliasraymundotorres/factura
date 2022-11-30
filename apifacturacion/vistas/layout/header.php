@@ -132,17 +132,17 @@
                 <p>Contribuyente</p>
               </a>
             </li>
-
+    <?php if( $_SESSION['tipo'] != 3 )  { ?>
           <li class="nav-header">Facturación Electrónica</li>
 
-          <?php if( strpos($_SESSION['user'], "admin") !== false ) { ?>
+          
           <li class="nav-item">
             <a href="?EnvioFactura" class="nav-link <?php if($request=='EnvioFactura'){ echo 'active'; } ?>">
               <i class="nav-icon fas fa-file"></i>
               <p>Factura</p>
             </a>
           </li>
-          <?php } ?>
+          
           <li class="nav-item">
             <a href="?EnvioBoleta" class="nav-link <?php if($request=='EnvioBoleta'){ echo 'active'; } ?>">
               <i class="nav-icon fas fa-file"></i>
@@ -175,7 +175,7 @@
               <p>Baja de Facturas</p>
             </a>
           </li> 
-          
+    <?php } ?>      
           
           <li class="nav-item <?php if($request=='FacturasBoletas'){ echo 'menu-open'; } ?>">
             <a href="#" class="nav-link <?php if($request=='FacturasBoletas'){ echo 'active'; } ?>">

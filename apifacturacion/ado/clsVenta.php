@@ -30,8 +30,8 @@ class clsVenta{
 	}
 
 	function insertarVenta($idemisor, $venta){
-		$sql = "INSERT INTO venta(id, idemisor, tipocomp, idserie, serie, correlativo, fecha_emision, codmoneda, op_gravadas, op_exoneradas, op_inafectas, igv, descuento, total, codcliente, observaciones)
-				VALUES (NULL, :idemisor, :tipocomp, :idserie, :serie, :correlativo, :fecha_emision, :codmoneda, :op_gravadas, :op_exoneradas, :op_inafectas, :igv, :descuento, :total, :codcliente, :observaciones)";
+		$sql = "INSERT INTO venta(id, idemisor, tipocomp, idserie, serie, correlativo, fecha_emision, codmoneda, op_gravadas, op_exoneradas, op_inafectas, igv, descuento, total, codcliente, observaciones, obs, user_id)
+				VALUES (NULL, :idemisor, :tipocomp, :idserie, :serie, :correlativo, :fecha_emision, :codmoneda, :op_gravadas, :op_exoneradas, :op_inafectas, :igv, :descuento, :total, :codcliente, :observaciones, :obs, :user_id)";
 		$parametros = array(
 					':idemisor'=>$idemisor,
 					':tipocomp'=>$venta['tipodoc'],
@@ -47,7 +47,9 @@ class clsVenta{
 					':descuento'	=>$venta['descValor'],
 					':total'		=>$venta['total'],
 					':codcliente'	=>$venta['codcliente'],
-					':observaciones'=>$venta['observaciones']			
+					':observaciones'=>$venta['observaciones'],
+					':obs'			=>$venta['obs'],
+					':user_id'		=>$venta['user_id']	
 				);
 
 			global $cnx;
@@ -169,6 +171,15 @@ class clsVenta{
 		$pre->execute($parametros);
 		return $pre;
 	}
+	function mostrarVentasPorUsuario($id)
+	{
+		$sql = "SELECT v.id, v.fecha_emision,c.nrodoc,c.razon_social, v.serie, v.correlativo, v.codmoneda,v.total, v.feestado from venta as v join cliente as c on v.codcliente=c.id WHERE v.user_id=:id";
+		$parametros = array(':id'=>$id);
+		global $cnx;
+		$pre = $cnx->prepare($sql);
+		$pre->execute($parametros);
+		return $pre;
+	}
 
 	function comprobarComprobante($id)
 	{
@@ -198,6 +209,16 @@ class clsVenta{
 	     }	
 		
 		
+	}
+	function listaUsuarios()
+	{
+		$sql = "SELECT * FROM usuario ";
+    
+
+		global $cnx;
+		$pre = $cnx->prepare($sql);
+		$pre->execute();
+		return $pre;
 	}
 
 
